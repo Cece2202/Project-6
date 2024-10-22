@@ -8,7 +8,7 @@ exports.createSauce = (req, res, next) => {
 
     console.log('Request body:', req.body);
     console.log('File info:', req.file);
-
+    req.body.sauce = JSON.parse(req.body.sauce);
 
     const sauce = new Sauce({
         ...sauceObject,
@@ -16,7 +16,7 @@ exports.createSauce = (req, res, next) => {
     });
     sauce.save()
         .then(() => res.status(201).json({ message: 'Sauce created successfully!' }))
-        .catch(error => res.status(400).json({ error ,'message': 'failed'}));
+        .catch(error => res.status(400).json({ error, 'message': 'failed' }));
 };
 
 // Delete a sauce
