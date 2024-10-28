@@ -14,7 +14,7 @@ router.get('/:id', auth, sauceController.getOneSauce);
 router.post('/', auth, multer, sauceController.createSauce);
 
 // Modify an existing sauce
-// router.put('/:id', auth, multer, sauceController.modifySauce);
+router.put('/:id', auth, multer, sauceController.modifySauce);
 
 // Delete a sauce
 router.delete('/:id', auth, sauceController.deleteSauce);

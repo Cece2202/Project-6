@@ -47,39 +47,73 @@ exports.getOneSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 
-// Update an existing sauce
-exports.updateSauce = (req, res, next) => {
-    let sauceObject = {};
-
-    // Check if a file (image) was uploaded
+exports.modifySauce = (req, res, next) => {
+    // let sauce = new Sauce({ _id: req.params._id });
+    let sauce;
     if (req.file) {
-        // If a new image is uploaded, update the image URL and delete the old image
-        sauceObject = {
-            ...JSON.parse(req.body.sauce),
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        };
+        const url = req.protocol + '://' + req.get('host');
+        req.body.sauce = JSON.parse(req.body.sauce);
+        sauce = new Sauce({
+            _id: req.params.id,
+            userId: req.body.sauce.userId,
+            name: req.body.sauce.name,
+            manufacturer: req.body.sauce.manufacturer,
+            description: req.body.sauce.description,
+            mainPepper: req.body.sauce.mainPepper,
+            imageUrl: url + '/images/' + req.file.filename,
+            heat: req.body.sauce.heat
+        });
 
-        // Find the sauce to delete the old image
-        Sauce.findOne({ _id: req.params.id })
-            .then(sauce => {
-                const oldFilename = sauce.imageUrl.split('/images/')[1];
-                fs.unlink(`images/${oldFilename}`, () => {
-                    // Continue with the sauce update
-                    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-                        .then(() => res.status(200).json({ message: 'Sauce updated with new image!' }))
-                        .catch(error => res.status(400).json({ error }));
-                });
-            })
-            .catch(error => res.status(500).json({ error }));
     } else {
-        // If no new image is uploaded, just update the other fields
-        sauceObject = { ...req.body };
-
-        Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-            .then(() => res.status(200).json({ message: 'Sauce updated successfully!' }))
-            .catch(error => res.status(400).json({ error }));
+        sauce = new Sauce({
+            _id: req.params.id,
+            userId: req.body.userId,
+            name: req.body.name,
+            manufacturer: req.body.manufacturer,
+            description: req.body.description,
+            mainPepper: req.body.mainPepper,
+            heat: req.body.heat
+        });
     }
+
+    Sauce.updateOne({ _id: req.params.id }, sauce)
+        .then(() => res.status(200).json({ message: 'Sauce updated successfully!' }))
+        .catch(error => res.status(400).json({ error }));
 };
+
+// Update an existing sauce
+// exports.updateSauce = (req, res, next) => {
+//     let sauceObject = {};
+
+//     // Check if a file (image) was uploaded
+//     if (req.file) {
+//         // If a new image is uploaded, update the image URL and delete the old image
+//         sauceObject = {
+//             ...JSON.parse(req.body.sauce),
+//             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+//         };
+
+//         // Find the sauce to delete the old image
+//         Sauce.findOne({ _id: req.params.id })
+//             .then(sauce => {
+//                 const oldFilename = sauce.imageUrl.split('/images/')[1];
+//                 fs.unlink(`images/${oldFilename}`, () => {
+//                     // Continue with the sauce update
+//                     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+//                         .then(() => res.status(200).json({ message: 'Sauce updated with new image!' }))
+//                         .catch(error => res.status(400).json({ error }));
+//                 });
+//             })
+//             .catch(error => res.status(500).json({ error }));
+//     } else {
+//         // If no new image is uploaded, just update the other fields
+//         sauceObject = { ...req.body };
+
+//         Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+//             .then(() => res.status(200).json({ message: 'Sauce updated successfully!' }))
+//             .catch(error => res.status(400).json({ error }));
+//     }
+// };
 
 // Handle liking or disliking a sauce
 exports.likeSauce = (req, res, next) => {
