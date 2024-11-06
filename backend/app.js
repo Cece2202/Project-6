@@ -2,9 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors'); // Import cors middleware
-// const userController = require('./controllers/user')
-// const sauceController = require('./controllers/sauces')
-// const user = require('./models/user');
+
 
 const userRoutes = require('./routes/user')
 const sauceRoutes = require('./routes/sauce');
@@ -34,7 +32,7 @@ app.use((req, res, next) => {
   next();
 });
 
-mongoose.connect('mongodb+srv://cparker4400:1SseRxj3NnINk6ll@cluster0.x1erk.mongodb.net/test?retryWrites=true')
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.x1erk.mongodb.net/test?retryWrites=true`)
   .then(() => {
     console.log('Successfully connected to MongoDB Atlas!');
   })
