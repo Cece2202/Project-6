@@ -33,7 +33,6 @@ exports.deleteSauce = (req, res, next) => {
                     error: new Error('Requête non autorisée !')
                 });
             }
-            // FIXME check sauce.userId is equal to req.auth.userId
             const filename = sauce.imageUrl.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
                 Sauce.deleteOne({ _id: req.params.id })
